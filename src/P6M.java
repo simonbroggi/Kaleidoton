@@ -1,0 +1,59 @@
+import processing.core.*;
+class P6M extends Pattern{
+  
+  private float triL, triS, triHypo, triHypoL, triHypoS, triHeight;
+  
+  P6M(PApplet pApplet){
+    super();
+    setTriL(pApplet, 80);
+  }
+  
+  void setTriL(PApplet pApplet, float newTriL){
+    if(triL != newTriL){
+      triL = newTriL;
+      triS = JPOrnament.TAN30 * triL;
+      triHypo = PApplet.sqrt(PApplet.pow(triL, 2)+PApplet.pow(triS, 2));
+      triHypoL = PApplet.pow(triL, 2) / triHypo;
+      triHypoS = triHypo - triHypoL;
+      triHeight = PApplet.sqrt(triHypoL*triHypoS);
+      squareTile = pApplet.createGraphics(PApplet.round(triHypo+triS), PApplet.round(triL), P3D);
+    }
+  }
+  
+  void render(PApplet pApplet, PatternInput pIn){
+    
+    squareTile.beginDraw();
+    
+    int triL = 20;
+    
+    //squareTile.stroke(color(255, 0, 0));
+    squareTile.noStroke();
+    squareTile.beginShape(TRIANGLE_FAN);
+    squareTile.texture(pIn.img);
+    squareTile.vertex(0, squareTile.height, pIn.u1, pIn.v1);
+    squareTile.vertex(0, 0, pIn.u2, pIn.v2);
+    squareTile.vertex(triS, 0, pIn.u3, pIn.v3);
+    squareTile.vertex(triHypoL, triHeight, pIn.u2, pIn.v2);
+    squareTile.vertex(triHypo, squareTile.height, pIn.u3, pIn.v3);
+    squareTile.endShape();
+    
+    squareTile.beginShape(TRIANGLE_FAN);
+    squareTile.texture(pIn.img);
+    squareTile.vertex(squareTile.width, 0, pIn.u1, pIn.v1);
+    squareTile.vertex(squareTile.width, squareTile.height, pIn.u2, pIn.v2);
+    squareTile.vertex(triHypo, squareTile.height, pIn.u3, pIn.v3);
+    squareTile.vertex(triHypoL, triHeight, pIn.u2, pIn.v2);
+    squareTile.vertex(triS, 0, pIn.u3, pIn.v3);
+    squareTile.endShape();
+    
+    squareTile.endDraw();
+    //pApplet.image(squareTile,0,0,squareTile.width,squareTile.height);
+    checkerWrapImage(pApplet, squareTile);
+    //pApplet.image(squareTile, 0, 0);
+    
+  }
+  
+  void getPixel(PatternInput patternInput){
+    
+  }
+}
