@@ -47,7 +47,7 @@ class Pattern implements PConstants{
     int repY = 1 + PApplet.floor(pApplet.height / tile.height);
     int v = 0;
     int u = 0;
-    //pApplet.noStroke();
+    pApplet.noStroke();
     boolean swapX = true;
     
     for(int x=0; x<repX; x++){

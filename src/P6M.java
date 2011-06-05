@@ -13,7 +13,7 @@ class P6M extends Pattern{
   }
   
   void setTriL(float newTriL){
-    if(triL != newTriL){
+    if(newTriL<=1024 && triL != newTriL){
       triL = newTriL;
       triS = JPOrnament.TAN30 * triL;
       triHypo = PApplet.sqrt(PApplet.pow(triL, 2)+PApplet.pow(triS, 2));
