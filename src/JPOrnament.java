@@ -1,4 +1,6 @@
 import processing.core.*;
+import processing.opengl.*;
+
 
 public class JPOrnament extends PApplet{
   
@@ -12,8 +14,9 @@ public class JPOrnament extends PApplet{
   Kreisspiegelung addition;
   
   public void setup(){
-    size(800,600, P3D);
+    size(800,600, OPENGL);
     frameRate(60);
+    
     
     pattern = new P6M(this);
     addition = new Kreisspiegelung(this, 200, 300, 180);

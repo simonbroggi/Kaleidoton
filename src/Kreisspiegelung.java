@@ -37,6 +37,7 @@ class Kreisspiegelung implements PConstants{
         img.pixels[i] = pApplet.color(0, 0, 0, 0);
       }
     }
+    img.updatePixels();
   }
   void setXY(int newX, int newY){
     x = newX;
