@@ -3,12 +3,16 @@ class P6M extends Pattern{
   
   private float triL, triS, triHypo, triHypoL, triHypoS, triHeight;
   
-  P6M(PApplet pApplet){
-    super();
-    setTriL(pApplet, 80);
+  public P6M(PApplet pApplet){
+    super(pApplet);
+    setTriL(80);
   }
   
-  void setTriL(PApplet pApplet, float newTriL){
+  public void setTileHeight(int h){
+    setTriL((float)h);
+  }
+  
+  void setTriL(float newTriL){
     if(triL != newTriL){
       triL = newTriL;
       triS = JPOrnament.TAN30 * triL;
@@ -20,7 +24,7 @@ class P6M extends Pattern{
     }
   }
   
-  void render(PApplet pApplet, PatternInput pIn){
+  public void render(PatternInput pIn){
     
     squareTile.beginDraw();
     
@@ -48,7 +52,7 @@ class P6M extends Pattern{
     
     squareTile.endDraw();
     //pApplet.image(squareTile,0,0,squareTile.width,squareTile.height);
-    checkerWrapImage(pApplet, squareTile);
+    checkerWrapImage(squareTile);
     //pApplet.image(squareTile, 0, 0);
     
   }

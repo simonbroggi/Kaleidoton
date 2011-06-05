@@ -3,13 +3,12 @@ import processing.core.*;
 public class JPOrnament extends PApplet{
   
   public static void main(String args[]){
-    PApplet.main(new String[] {"JPOrnament", "--present"});
+    PApplet.main(new String[] {"--present", "JPOrnament"});
   }
   static float TAN30 = PApplet.tan(PApplet.radians(30));
   Pattern pattern;
   PatternInput patternInput;
   SoundSensor soundSensor;
-  Monitor monitor;
   Kreisspiegelung addition;
   
   public void setup(){
@@ -22,14 +21,19 @@ public class JPOrnament extends PApplet{
     
     soundSensor = new SoundSensor(this);
     
-    monitor = new Monitor(this, patternInput, soundSensor);
+    new Monitor(this, patternInput, soundSensor);
   }
   
   public void draw(){
     //println("draw ornament");
     addition.setXY(mouseX, mouseY);
     soundSensor.update();
-    pattern.render(this, patternInput);
+    
+    float avg0 = soundSensor.fft.getAvg(0);
+    patternInput.u = avg0;
+    patternInput.updateUV();
+    pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*1000));
+    pattern.render(patternInput);
     addition.render(this, pattern);
   }
 

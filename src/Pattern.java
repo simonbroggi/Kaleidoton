@@ -1,12 +1,17 @@
 import processing.core.*;
 class Pattern implements PConstants{
-  PGraphics squareTile;
-  Pattern(){
-  }
-  void render(PApplet pApplet, PatternInput patternInput){
+  
+  protected PApplet pApplet;
+  protected PGraphics squareTile;
+  
+  public Pattern(PApplet theApplet){
+    pApplet = theApplet;
   }
   
-  int getPixel(int x, int y){
+  public void render(PatternInput patternInput){
+  }
+  
+  public int getPixel(int x, int y){
     
     int tx = x % (squareTile.width*2);
     int ty = y % (squareTile.height*2);
@@ -22,8 +27,12 @@ class Pattern implements PConstants{
     return squareTile.get(tx, ty);
   }
   
+  public void setTileHeight(int h){
+    
+  }
   
-  void wrapImage(PApplet pApplet, PImage tile){
+  
+  void wrapImage(PImage tile){
     int repX = 1 + PApplet.floor(pApplet.width / tile.width);
     int repY = 1 + PApplet.floor(pApplet.height / tile.height);
     for(int x=0; x<repX; x++){
@@ -33,7 +42,7 @@ class Pattern implements PConstants{
     } 
   }
 
-  void checkerWrapImage(PApplet pApplet, PImage tile){
+  void checkerWrapImage(PImage tile){
     int repX = 1 + PApplet.floor(pApplet.width / tile.width);
     int repY = 1 + PApplet.floor(pApplet.height / tile.height);
     int v = 0;

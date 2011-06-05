@@ -15,13 +15,14 @@ class Monitor extends ExtraPWindow{
   }
   
   public void draw(){
-    background(color(125, 125, 200));
+    background(color(200, 200, 200));
     if(patternInput != null){ //why
       //println("drawing monitor");
       patternInput.render(this);
     }
     if(soundSensor != null){
       soundSensor.renderBuffer(this);
+      soundSensor.renderFFTAverages(this);
       soundSensor.renderFFT(this);
     }
   }
