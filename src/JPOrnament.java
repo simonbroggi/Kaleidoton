@@ -26,18 +26,27 @@ public class JPOrnament extends PApplet{
     
     new Monitor(this, patternInput, soundSensor);
   }
-  
+  public void keyPressed() {
+    if (key == CODED) {
+      if (keyCode == UP) {
+        addition.addToR(3);
+      } else if (keyCode == DOWN) {
+        addition.addToR(-3);
+      } 
+    }
+  }
   public void draw(){
     //println("draw ornament");
     addition.setXY(mouseX, mouseY);
     soundSensor.update();
-    
+    /*
     float avg0 = soundSensor.fft.getAvg(0);
     patternInput.u = avg0;
     patternInput.updateUV();
     pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*1000));
+    */
     pattern.render(patternInput);
-    addition.render(this, pattern);
+    addition.render(pattern);
   }
 
 }

@@ -2,7 +2,7 @@ import processing.core.*;
 class Pattern implements PConstants{
   
   protected PApplet pApplet;
-  protected PGraphics squareTile;
+  public PGraphics squareTile;
   
   public Pattern(PApplet theApplet){
     pApplet = theApplet;
@@ -12,9 +12,10 @@ class Pattern implements PConstants{
   }
   
   public int getPixel(int x, int y){
-    
     int tx = x % (squareTile.width*2);
     int ty = y % (squareTile.height*2);
+    if(tx<0) tx+=squareTile.width*2;
+    if(ty<0) ty+=squareTile.height*2;
     if(tx > squareTile.width){
       tx = squareTile.width - (tx-squareTile.width);
     }
@@ -22,6 +23,10 @@ class Pattern implements PConstants{
       ty = squareTile.height - (ty-squareTile.height);
     }
     
+    /*
+    int tx = x%squareTile.width;
+    int ty = y%squareTile.height;
+    */
     //return color(255, 0, 0);
     //return 2;
     return squareTile.get(tx, ty);

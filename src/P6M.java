@@ -56,8 +56,4 @@ class P6M extends Pattern{
     //pApplet.image(squareTile, 0, 0);
     
   }
-  
-  void getPixel(PatternInput patternInput){
-    
-  }
 }
