@@ -19,9 +19,9 @@ class PatternInput implements PConstants{
   
   public PatternInput(PApplet pApplet, String imageName){
     img = pApplet.loadImage(imageName);
-    u = 0.5f;
-    v = 0.5f;
-    r = 0.3f;
+    u = 0.7f;
+    v = 0.2f;
+    r = 0.05f;
     updateUV();
   }
   

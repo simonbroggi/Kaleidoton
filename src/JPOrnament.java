@@ -5,7 +5,8 @@ import processing.opengl.*;
 public class JPOrnament extends PApplet{
   
   public static void main(String args[]){
-    PApplet.main(new String[] {"--present", "JPOrnament"});
+    //PApplet.main(new String[] {"--present", "JPOrnament"});
+    PApplet.main(new String[] {"JPOrnament"});
   }
   static float TAN30 = PApplet.tan(PApplet.radians(30));
   Pattern pattern;
@@ -14,7 +15,7 @@ public class JPOrnament extends PApplet{
   Kreisspiegelung addition;
   
   public void setup(){
-    size(800,600, OPENGL);
+    size(1024,768, OPENGL);
     frameRate(60);
     
     
@@ -39,12 +40,13 @@ public class JPOrnament extends PApplet{
     //println("draw ornament");
     addition.setXY(mouseX, mouseY);
     soundSensor.update();
-    /*
+    
     float avg0 = soundSensor.fft.getAvg(0);
-    patternInput.u = avg0;
+    patternInput.u = avg0/10;
+    
     patternInput.updateUV();
-    pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*1000));
-    */
+    //pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*100));
+    
     pattern.render(patternInput);
     addition.render(pattern);
   }
