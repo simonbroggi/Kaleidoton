@@ -1,19 +1,40 @@
 import processing.core.*;
 class PatternInput implements PConstants{
   PImage img;
-  float u, v, r;
+  private float u, v, r, a;
+  private boolean changed = false;
+  
+  public void setU(float theU){
+    u = theU;
+    changed = true;
+  }
+  public void setV(float theV){
+    v = theV;
+    changed = true;
+  }
+  public void setR(float theR){
+    r = theR;
+    changed = true;
+  }
+  public void setA(float theA){
+    a = theA;
+    changed = true;
+  }
   
   //P6M specific
   int u1, v1, u2, v2, u3, v3; //uv coordinates of the triangle. 1:30degrees 2:90degrees 3:60degrees
   void updateUV(){
-    u2 = xNormToAbs(u);
-    v2 = yNormToAbs(v);
-    u1 = u2;
-    int triL = yNormToAbs(r);
-    v1 = v2 + triL;
-    int triS = PApplet.floor(JPOrnament.TAN30 * triL);
-    u3 = u2 + triS;
-    v3 = v2;
+    if(changed){
+      u2 = xNormToAbs(u);
+      v2 = yNormToAbs(v);
+      u1 = u2;
+      int triL = yNormToAbs(r);
+      v1 = v2 + triL;
+      int triS = PApplet.floor(JPOrnament.TAN30 * triL);
+      u3 = u2 + triS;
+      v3 = v2;
+      changed = false;
+    }
   }
   
   
@@ -24,7 +45,9 @@ class PatternInput implements PConstants{
     r = 0.05f;
     updateUV();
   }
-  
+  public void trigger(double theValue){
+    System.out.println(theValue);
+  }
   
   void render(PApplet p){
     //render for monitor

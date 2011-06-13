@@ -23,7 +23,6 @@ class P6M extends Pattern{
       squareTile = pApplet.createGraphics(PApplet.round(triHypo+triS), PApplet.round(triL), P3D);
     }
   }
-  
   public void render(PatternInput pIn){
     
     squareTile.beginDraw();
@@ -56,4 +55,5 @@ class P6M extends Pattern{
     //pApplet.image(squareTile, 0, 0);
     
   }
+  
 }

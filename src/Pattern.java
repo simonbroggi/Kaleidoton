@@ -6,6 +6,7 @@ class Pattern implements PConstants{
   
   public Pattern(PApplet theApplet){
     pApplet = theApplet;
+    squareTile = pApplet.createGraphics(2048, 2048, P3D);
   }
   
   public void render(PatternInput patternInput){

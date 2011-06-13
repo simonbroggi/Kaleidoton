@@ -37,12 +37,20 @@ public class JPOrnament extends PApplet{
   
   private void addOrnamentControll(){
     controlP5 = new ControlP5(this);
-    ornamentControlWindow = controlP5.addControlWindow("controlP5window",100,100,512,512);
+    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0,512,512);
+    //controlP5.setColorBackground(color(0, 0, 80));
+    //controlP5.setColorForeground(color(255, 0, 0));
+    //controlP5.setColorLabel(color(0, 0, 255));
+    
     controlP5.controlWindow = ornamentControlWindow;
     //controlWindow.hideCoordinates();
-    ornamentControlWindow.setBackground(color(128));
-    Controller mySlider = controlP5.addSlider("sliderValue",0,255,40,40,100,10);
-    Textfield field = controlP5.addTextfield("myWindowTextfield",70,130,100,20);
+    ornamentControlWindow.setBackground(128);
+    
+    int knobDiameter = 40;
+    
+    addP5Slider(patternInput, "setR", 0.01f, 0.3f, 0.05f);
+    addP5Slider(patternInput, "setV", 0.0f, 1.0f, 0.5f);
+    addP5Slider(pattern, "setTileHeight", 16, 512, 80);
     
     occ = new OrnamentControlCanvas(patternInput, soundSensor);
     occ.pre();
@@ -51,6 +59,25 @@ public class JPOrnament extends PApplet{
     
   }
   
+  private int cP5X = 20, cP5Y = 20, cP5W = 200, cP5H = 20, cP5Lx=70, cP5Ly = 5;
+  private void addP5Slider(Object plugTo, String theName, float theMin, float theMax, float theDefaultValue){
+    //cP5Y += cP5H;
+    Slider slider = controlP5.addSlider(theName, theMin, theMax, theDefaultValue, cP5X, cP5Y, cP5W, cP5H);
+    slider.moveTo(ornamentControlWindow);
+    slider.plugTo(plugTo);
+    Textlabel t = controlP5.addTextlabel("l_"+theName, theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    t.moveTo(ornamentControlWindow);
+    cP5Y += cP5H*2;
+  }
+  private void addP5Slider(Object plugTo, String theName, int theMin, int theMax, int theDefaultValue){
+    Slider slider = controlP5.addSlider(theName, theMin, theMax, theDefaultValue, cP5X, cP5Y, cP5W, cP5H);
+    slider.moveTo(ornamentControlWindow);
+    slider.plugTo(plugTo);
+    Textlabel t = controlP5.addTextlabel("l_"+theName, theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    t.moveTo(ornamentControlWindow);
+    cP5Y += cP5H*2;
+    //cP5Y += cP5H;
+  }
   public void keyPressed() {
     if (key == CODED) {
       if (keyCode == UP) {
@@ -66,7 +93,7 @@ public class JPOrnament extends PApplet{
     soundSensor.update();
     
     float avg0 = soundSensor.fft.getAvg(0);
-    patternInput.u = avg0/10;
+    patternInput.setU(avg0/10);
     
     patternInput.updateUV();
     
