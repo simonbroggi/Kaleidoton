@@ -64,4 +64,7 @@ class SoundSensor implements PConstants{
       pApplet.line(i, h + audioIn.mix.get(i)*200, i+1, h + audioIn.mix.get(i+1)*200);
     }
   }
+  public void close(){
+    audioIn.close();
+  }
 }

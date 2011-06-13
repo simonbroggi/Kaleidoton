@@ -48,9 +48,10 @@ public class JPOrnament extends PApplet{
     
     int knobDiameter = 40;
     
-    addP5Slider(patternInput, "setR", 0.01f, 0.3f, 0.05f);
+    addP5Slider(patternInput, "setRadius", 0.01f, 0.3f, 0.05f);
     addP5Slider(patternInput, "setV", 0.0f, 1.0f, 0.5f);
     addP5Slider(pattern, "setTileHeight", 16, 512, 80);
+    addP5Slider(patternInput, "setAngle", 0.0f, TWO_PI, 0.0f);
     
     occ = new OrnamentControlCanvas(patternInput, soundSensor);
     occ.pre();
@@ -65,7 +66,7 @@ public class JPOrnament extends PApplet{
     Slider slider = controlP5.addSlider(theName, theMin, theMax, theDefaultValue, cP5X, cP5Y, cP5W, cP5H);
     slider.moveTo(ornamentControlWindow);
     slider.plugTo(plugTo);
-    Textlabel t = controlP5.addTextlabel("l_"+theName, theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    Textlabel t = controlP5.addTextlabel("l_"+theName, /*plugTo.getClass().getName()+"."+*/theName, cP5X+cP5Lx, cP5Y+cP5Ly);
     t.moveTo(ornamentControlWindow);
     cP5Y += cP5H*2;
   }
@@ -73,7 +74,7 @@ public class JPOrnament extends PApplet{
     Slider slider = controlP5.addSlider(theName, theMin, theMax, theDefaultValue, cP5X, cP5Y, cP5W, cP5H);
     slider.moveTo(ornamentControlWindow);
     slider.plugTo(plugTo);
-    Textlabel t = controlP5.addTextlabel("l_"+theName, theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    Textlabel t = controlP5.addTextlabel("l_"+theName, /*plugTo.getClass().getName()+"."+*/theName, cP5X+cP5Lx, cP5Y+cP5Ly);
     t.moveTo(ornamentControlWindow);
     cP5Y += cP5H*2;
     //cP5Y += cP5H;
@@ -104,7 +105,7 @@ public class JPOrnament extends PApplet{
   }
   
   public void exit(){
-    
+    soundSensor.close();
     super.exit();
   }
 

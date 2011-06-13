@@ -1,8 +1,9 @@
 import processing.core.*;
 class PatternInput implements PConstants{
   PImage img;
-  private float u, v, r, a;
-  private boolean changed = false;
+  private float u, v, r, a; //u and v are coordinates, r radius, and a rotation angle
+  private boolean changed = true;
+  private PApplet pApplet;
   
   public void setU(float theU){
     u = theU;
@@ -12,11 +13,11 @@ class PatternInput implements PConstants{
     v = theV;
     changed = true;
   }
-  public void setR(float theR){
+  public void setRadius(float theR){
     r = theR;
     changed = true;
   }
-  public void setA(float theA){
+  public void setAngle(float theA){
     a = theA;
     changed = true;
   }
@@ -25,28 +26,36 @@ class PatternInput implements PConstants{
   int u1, v1, u2, v2, u3, v3; //uv coordinates of the triangle. 1:30degrees 2:90degrees 3:60degrees
   void updateUV(){
     if(changed){
-      u2 = xNormToAbs(u);
-      v2 = yNormToAbs(v);
-      u1 = u2;
-      int triL = yNormToAbs(r);
-      v1 = v2 + triL;
-      int triS = PApplet.floor(JPOrnament.TAN30 * triL);
-      u3 = u2 + triS;
-      v3 = v2;
+      if (a == 0.0f){
+        u2 = xNormToAbs(u);
+        v2 = yNormToAbs(v);
+        u1 = u2;
+        int triL = yNormToAbs(r);
+        v1 = v2 + triL;
+        int triS = PApplet.floor(JPOrnament.TAN30 * triL);
+        u3 = u2 + triS;
+        v3 = v2;
+      }
+      else{
+        u2 = xNormToAbs(u);
+        v2 = yNormToAbs(v);
+        u1 = xNormToAbs(u + r * pApplet.cos(a+pApplet.radians(90)));
+        v1 = yNormToAbs(v + r * pApplet.sin(a+pApplet.radians(90)));
+        u3 = xNormToAbs(u + r * JPOrnament.TAN30 * pApplet.cos(a));
+        v3 = yNormToAbs(v + r * JPOrnament.TAN30 * pApplet.sin(a));
+      }
       changed = false;
     }
   }
   
-  
-  public PatternInput(PApplet pApplet, String imageName){
+  public PatternInput(PApplet theApplet, String imageName){
+    pApplet = theApplet;
     img = pApplet.loadImage(imageName);
     u = 0.7f;
     v = 0.2f;
     r = 0.05f;
+    a = 0.0f;
     updateUV();
-  }
-  public void trigger(double theValue){
-    System.out.println(theValue);
   }
   
   void render(PApplet p){
