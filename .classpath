@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ProcessingCore"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Minim"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ProcessingOGL"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/controlP5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
