@@ -1,3 +1,5 @@
+import java.awt.event.MouseEvent;
+
 import processing.core.PApplet;
 import controlP5.ControlWindowCanvas;
 
@@ -17,6 +19,7 @@ public class OrnamentControlCanvas extends ControlWindowCanvas {
     patternInput.render(theApplet);
     soundSensor.renderFFT(theApplet);
     soundSensor.renderFFTAverages(theApplet);
+    soundSensor.renderSlowAverages(theApplet);
     soundSensor.renderBuffer(theApplet);
     
   }
