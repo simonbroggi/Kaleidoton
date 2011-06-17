@@ -9,8 +9,8 @@ public class JPOrnament extends PApplet{
   private OrnamentControlCanvas occ;
   
   public static void main(String args[]){
-    //PApplet.main(new String[] {"--present", "JPOrnament"});
-    PApplet.main(new String[] {"JPOrnament"});
+    PApplet.main(new String[] {"--present", "JPOrnament"});
+    //PApplet.main(new String[] {"JPOrnament"});
   }
   static float TAN30 = PApplet.tan(PApplet.radians(30));
   Pattern pattern;
@@ -20,8 +20,8 @@ public class JPOrnament extends PApplet{
   
   
   public void setup(){
-    //size(1920,1080, OPENGL);
-    size(1024,768, OPENGL);
+    size(1920,1080, OPENGL);
+    //size(1024,768, OPENGL);
     
     //frame.setResizable(true);
     //frame.setUndecorated(true);
@@ -38,12 +38,17 @@ public class JPOrnament extends PApplet{
     
     addOrnamentControll();
   }
-  /*
+  
   public void setFullscreen(){
-    System.out.println("fullllllll");
-    //frame.setUndecorated(true);
+    System.out.println("fullscreen is stil a problem "+screenWidth);
+    
+    
+    //ornamentControlWindow.papplet().frame.setResizable(true);
+    //ornamentControlWindow.papplet().resize(screenWidth, screenHeight);
+    ornamentControlWindow.setUndecorated(!ornamentControlWindow.isUndecorated());
+    
   }
-  */
+  
   
   private void addOrnamentControll(){
     controlP5 = new ControlP5(this);
@@ -112,14 +117,61 @@ public class JPOrnament extends PApplet{
       } 
     }
   }
+  private boolean moveURight = true;
+  
   public void draw(){
     //println("draw ornament");
     addition.setXY(mouseX, mouseY);
     soundSensor.update();
     
     
-    float avg0 = soundSensor.getAvg0();
-    patternInput.setU(avg0/10);
+    //float deltaU = soundSensor.getAvg0()/20;
+    float deltaU = moveURight?soundSensor.getSlowAvgDelta0():-soundSensor.getSlowAvgDelta0();
+    float newU = patternInput.getU()+deltaU*deltaU;
+    newU = norm(newU, floor(newU), ceil(newU));
+    /*
+    if(newU >= 1){
+      newU = newU - floor(newU);
+    }
+    else if(newU < 0){
+      newU = newU - floor(newU)+1;
+    }
+    */
+    /*
+    if(newU > 1){
+      newU = 1;
+      moveURight = false;
+    }
+    else if(newU < 0){
+      newU = 0;
+      moveURight = true;
+    }
+    */
+    /*
+    if(moveURight){
+      newU += deltaU;
+      if(newU > 1){
+        newU = 1;
+        moveURight = false;
+      }
+    }
+    else{
+      newU -= deltaU;
+      if(newU < 0){
+        newU = 0;
+        moveURight = true;
+      }
+    }
+    */
+    
+    /*float newU = patternInput.getU()+avg0/10;
+    if (newU > 1){
+      newU -= newU%1.0;
+    }
+    */
+    patternInput.setU(newU);
+    patternInput.setAngle(patternInput.getAngle()+soundSensor.getAvg2()/2);
+    //patternInput.setU(avg0/10);
     
     patternInput.updateUV();
     

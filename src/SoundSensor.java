@@ -72,6 +72,15 @@ class SoundSensor implements PConstants{
   public float getAvg0(){
     return fft.getAvg(0);
   }
+  public float getSlowAvgDelta0(){
+    return fft.getAvg(0)-slowAverages[0];
+  }
+  public float getAvg2(){
+    return fft.getAvg(2);
+  }
+  public float getSlowAvgDelta2(){
+    return fft.getAvg(2)-slowAverages[2];
+  }
   
   public void renderFFTAverages(PApplet pApplet){
     pApplet.rectMode(CORNERS);

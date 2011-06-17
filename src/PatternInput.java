@@ -1,10 +1,16 @@
 import processing.core.*;
 class PatternInput implements PConstants{
   PImage img;
-  private float u, v, r, a; //u and v are coordinates, r radius, and a rotation angle
+  private float u, v, r, a; //u and v are normalized coordinates, r radius, and a rotation angle
   private boolean changed = true;
   private PApplet pApplet;
   
+  public float getU(){
+    return u;
+  }
+  public float getV(){
+    return v;
+  }
   public void setU(float theU){
     u = theU;
     changed = true;
@@ -17,9 +23,15 @@ class PatternInput implements PConstants{
     r = theR;
     changed = true;
   }
+  public float getRadius(){
+    return r;
+  }
   public void setAngle(float theA){
     a = theA;
     changed = true;
+  }
+  public float getAngle(){
+    return a;
   }
   
   //P6M specific
@@ -76,8 +88,8 @@ class PatternInput implements PConstants{
     g.endShape();
     //g.rect(xNormToAbs(0), yNormToAbs(0), xNormToAbs(1), yNormToAbs(1));
     g.endDraw();
-    //g.resize(p.width, 0);
-    g.resize(0, p.height);
+    g.resize(p.width, 0);
+    //g.resize(0, p.height);
     p.image(g, 0, 0);
   }
   
