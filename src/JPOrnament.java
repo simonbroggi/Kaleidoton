@@ -170,7 +170,7 @@ public class JPOrnament extends PApplet{
     }
     */
     patternInput.setU(newU);
-    patternInput.setAngle(patternInput.getAngle()+soundSensor.getAvg2()/2);
+    patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
     //patternInput.setU(avg0/10);
     
     patternInput.updateUV();

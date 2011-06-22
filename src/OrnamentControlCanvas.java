@@ -18,10 +18,10 @@ public class OrnamentControlCanvas extends ControlWindowCanvas {
     
     patternInput.render(theApplet);
     soundSensor.renderFFT(theApplet);
-    soundSensor.renderFFTAverages(theApplet);
     soundSensor.renderSlowAverages(theApplet);
+    soundSensor.renderTheAverages(theApplet);
     soundSensor.renderBuffer(theApplet);
-    
+    soundSensor.renderFFTAverages(theApplet);
   }
 
 }
