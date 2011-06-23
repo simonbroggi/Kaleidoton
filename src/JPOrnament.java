@@ -20,11 +20,15 @@ public class JPOrnament extends PApplet{
   
   
   public void setup(){
-    size(1920,1080, OPENGL);
+    //size(1920,1080, OPENGL);
+    size(1910,1070, OPENGL);
     //size(1024,768, OPENGL);
+    
+    
     
     //frame.setResizable(true);
     //frame.setUndecorated(true);
+    
     frameRate(60);
     
     
@@ -51,8 +55,11 @@ public class JPOrnament extends PApplet{
   
   
   private void addOrnamentControll(){
+    
     controlP5 = new ControlP5(this);
-    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0,512,512, 30);
+    
+    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0,800,600, 30);
+    //ornamentControlWindow.
     //controlP5.setColorBackground(color(0, 0, 80));
     //controlP5.setColorForeground(color(255, 0, 0));
     //controlP5.setColorLabel(color(0, 0, 255));
@@ -68,6 +75,7 @@ public class JPOrnament extends PApplet{
     ornamentControlWindow.papplet().registerDispose(this);
     ornamentControlWindow.addCanvas(occ);
     
+    /*
     int knobDiameter = 40;
     
     addP5Slider(patternInput, "setRadius", 0.01f, 0.3f, 0.05f);
@@ -79,10 +87,50 @@ public class JPOrnament extends PApplet{
     knob.moveTo(ornamentControlWindow);
     knob.setMoveable(false);
     knob.plugTo(soundSensor);
-    
+    */
     Button full = controlP5.addButton("setFullscreen", 0.0f, 300, 400, 60, 40);
     full.moveTo(ornamentControlWindow);
     
+    
+    SoundSensor.SoundAverage[] avgs = soundSensor.getTheAverages();
+    for(int i=0; i<avgs.length; i++){
+    //for(int i=0; i<1; i++){
+      ControlGroup c = addSoundAverageControl(avgs[i]);
+      c.setPosition(10, 30+200*i);
+      c.moveTo(ornamentControlWindow);
+      
+    }
+    
+  }
+  private int theAvgNumber = 1;
+  private ControlGroup addSoundAverageControl(SoundSensor.SoundAverage average){
+    ControlGroup group = controlP5.addGroup("soundAverage "+theAvgNumber, 10, 10, 420);
+    group.setBackgroundHeight(150);
+    group.setBackgroundColor(color(0,100));
+    
+    Slider slider = controlP5.addSlider("setLow", 1, 2000, average.getLow(), 10, 20, 300, 20);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    
+    slider = controlP5.addSlider("setHigh", 1, 2000, average.getHigh(), 10, 50, 300, 20);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    
+    slider = controlP5.addSlider("setSlowAverageSpeed", 0.0f, 1.0f, average.getSlowAverageSpeed(), 10, 80, 300, 20);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    
+    slider = controlP5.addSlider("setThreshhold", 0.0f, 10.0f, average.getThreshhold(), 10, 110, 300, 20);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    
+    /*
+    Knob knob = controlP5.addKnob("setSlowAverageSpeed", 0.0f, 1.0f, 0.8f, 20, 90, 30);
+    knob.moveTo(group);
+    knob.plugTo(average);
+    */
+    theAvgNumber++;
+    return group;
   }
   
   private int cP5X = 20, cP5Y = 20, cP5W = 200, cP5H = 20, cP5Lx=70, cP5Ly = 5;

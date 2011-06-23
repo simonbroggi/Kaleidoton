@@ -18,6 +18,9 @@ class SoundSensor implements PConstants{
   private float slowAveragesSpeed = 0.8f;
   
   private SoundAverage[] theAverages;
+  public SoundAverage[] getTheAverages(){
+    return theAverages;
+  }
   //private BeatDetect beat;
   
   
@@ -40,17 +43,35 @@ class SoundSensor implements PConstants{
       slowAverage += d*slowAverageSpeed;
     }
     public void setLow(float low){
-      this.low = low;
+      if(low < high){
+        this.low = low;
+        //System.out.println("low set to "+this.low);
+      }
     }
     public void setHigh(float high){
-      this.high = high;
+      if(high > low){
+        this.high = high;
+        //System.out.println("high set to "+this.high);
+      }
+    }
+    public float getLow(){
+      return low;
+    }
+    public float getHigh(){
+      return high;
     }
     //between 0 and 1
     public void setSlowAverageSpeed(float slowAverageSpeed){
       this.slowAverageSpeed = slowAverageSpeed;
     }
+    public float getSlowAverageSpeed(){
+      return slowAverageSpeed;
+    }
     public void setThreshhold(float threshhold){
       this.threshhold = threshhold;
+    }
+    public float getThreshhold(){
+      return threshhold;
     }
     public void draw(PApplet pApplet, int leftX, int rightX, int baseY, int factor){
       pApplet.noStroke();
@@ -73,7 +94,7 @@ class SoundSensor implements PConstants{
     
     theAverages = new SoundAverage[2];
     theAverages[0] = new SoundAverage(1, 200);
-    theAverages[1] = new SoundAverage(200, 1000);
+    theAverages[1] = new SoundAverage(200, 500);
     //beat = new BeatDetect(bufferSize, sampleRate);
 
   }
