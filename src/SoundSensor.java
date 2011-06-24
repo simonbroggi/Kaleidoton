@@ -37,6 +37,12 @@ class SoundSensor implements PConstants{
       this.slowAverageSpeed = slowAveragesSpeed;
       this.threshhold = threshhold;
     }
+    public float getAverage(){
+      return average;
+    }
+    public float getSlowAverage(){
+      return slowAverage;
+    }
     public void update(FFT fft){
       average = fft.calcAvg(low, high);
       float d = average - slowAverage;

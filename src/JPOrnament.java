@@ -174,7 +174,11 @@ public class JPOrnament extends PApplet{
     
     
     //float deltaU = soundSensor.getAvg0()/20;
-    float deltaU = moveURight?soundSensor.getSlowAvgDelta0():-soundSensor.getSlowAvgDelta0();
+    //float deltaU = moveURight?soundSensor.getSlowAvgDelta0():-soundSensor.getSlowAvgDelta0();
+    
+    SoundSensor.SoundAverage[] averages = soundSensor.getTheAverages();
+    float slowAvgDelta = averages[0].getAverage()-averages[0].getSlowAverage();
+    float deltaU = moveURight?slowAvgDelta:-soundSensor.getSlowAvgDelta0();
     float newU = patternInput.getU()+deltaU*deltaU;
     newU = norm(newU, floor(newU), ceil(newU));
     /*
@@ -218,7 +222,9 @@ public class JPOrnament extends PApplet{
     }
     */
     patternInput.setU(newU);
-    patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
+    float slowAvgDelta2 = averages[1].getAverage()-averages[1].getSlowAverage();
+    patternInput.setAngle(patternInput.getAngle()+slowAvgDelta2);
+    //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
     //patternInput.setU(avg0/10);
     
     patternInput.updateUV();
