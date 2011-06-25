@@ -28,20 +28,33 @@ class SoundSensor implements PConstants{
     private float low, high, slowAverageSpeed, threshhold;
     private float average, slowAverage;
     private float ausschlag;//
-    public SoundAverage(float low, float high){
-      this(low, high, 0.8f, 0.0f);
+    private float factor;
+    private String name;
+    public SoundAverage(String name, float low, float high){
+      this(name, low, high, 0.8f, 0.0f, 1.0f);
     }
-    public SoundAverage(float low, float high, float slowAveragesSpeed, float threshhold){
+    public SoundAverage(String name, float low, float high, float slowAveragesSpeed, float threshhold, float factor){
+      this.name = name;
       this.low = low;
       this.high = high;
       this.slowAverageSpeed = slowAveragesSpeed;
       this.threshhold = threshhold;
+      this.factor = factor;
+    }
+    public String getName(){
+      return name;
+    }
+    public float getFactor(){
+      return factor;
+    }
+    public void setFactor(float factor){
+      this.factor = factor;
     }
     public float getAverage(){
-      return average;
+      return average*factor;
     }
     public float getSlowAverage(){
-      return slowAverage;
+      return slowAverage*factor;
     }
     public void update(FFT fft){
       average = fft.calcAvg(low, high);
@@ -80,11 +93,12 @@ class SoundSensor implements PConstants{
       return threshhold;
     }
     public void draw(PApplet pApplet, int leftX, int rightX, int baseY, int factor){
+      factor*=this.factor;
       pApplet.noStroke();
       pApplet.fill(pApplet.color(180, 0, 0, 128));
       pApplet.rect(leftX, baseY, rightX, baseY - average*factor);
       pApplet.fill(pApplet.color(255, 0, 0, 128));
-      pApplet.rect(leftX, baseY - slowAverage*factor - 1, rightX, baseY - slowAverage*factor + 1);
+      pApplet.rect(leftX, baseY - slowAverage*factor - 1 -(threshhold*factor/2), rightX, baseY - slowAverage*factor + 1 +(threshhold*factor/2));
     }
   }
   
@@ -98,9 +112,16 @@ class SoundSensor implements PConstants{
     // calculate the averages by grouping frequency bands linearly.
     fft.linAverages(avgSize);
     
-    theAverages = new SoundAverage[2];
-    theAverages[0] = new SoundAverage(1, 200);
-    theAverages[1] = new SoundAverage(200, 500);
+    theAverages = new SoundAverage[4];
+    theAverages[0] = new SoundAverage("low base", 32, 240);
+    theAverages[0].setSlowAverageSpeed(0.5f);
+    theAverages[1] = new SoundAverage("high base", 240, 500);
+    theAverages[1].setFactor(8.0f);
+    theAverages[2] = new SoundAverage("speach", 500, 2048);
+    theAverages[2].setFactor(20.0f);
+    theAverages[3] = new SoundAverage("letter s", 6000, 15000);
+    theAverages[3].setFactor(25.0f);
+    
     //beat = new BeatDetect(bufferSize, sampleRate);
 
   }
@@ -115,14 +136,6 @@ class SoundSensor implements PConstants{
     for(int i=0; i<theAverages.length; i++){
       theAverages[i].update(fft);
     }
-    //BandPass bpf = new BandPass(55, 12, sampleRate);
-    //audioIn.addEffect(bpf);
-    /*
-    beat.detect(audioIn.mix);
-    if(beat.isOnset()){
-      System.out.println("BBBBBBBBBBBBBBBBBBBb");
-    }
-    */
   }
   
   private void updateSlowAverages(){

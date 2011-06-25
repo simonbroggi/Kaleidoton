@@ -16,7 +16,7 @@ public class JPOrnament extends PApplet{
   Pattern pattern;
   PatternInput patternInput;
   SoundSensor soundSensor;
-  Kreisspiegelung addition;
+  //Kreisspiegelung addition;
   
   
   public void setup(){
@@ -35,7 +35,7 @@ public class JPOrnament extends PApplet{
     
     
     pattern = new P6M(this);
-    addition = new Kreisspiegelung(this, 200, 300, 180);
+    //addition = new Kreisspiegelung(this, 200, 300, 180);
     patternInput = new PatternInput(this, "image.jpg");
     
     soundSensor = new SoundSensor(this);
@@ -58,7 +58,7 @@ public class JPOrnament extends PApplet{
     
     controlP5 = new ControlP5(this);
     
-    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0,800,600, 30);
+    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0, 1024, 768, 20);
     //ornamentControlWindow.
     //controlP5.setColorBackground(color(0, 0, 80));
     //controlP5.setColorForeground(color(255, 0, 0));
@@ -96,7 +96,7 @@ public class JPOrnament extends PApplet{
     for(int i=0; i<avgs.length; i++){
     //for(int i=0; i<1; i++){
       ControlGroup c = addSoundAverageControl(avgs[i]);
-      c.setPosition(10, 30+200*i);
+      c.setPosition(10, 30+170*i);
       c.moveTo(ornamentControlWindow);
       
     }
@@ -104,25 +104,31 @@ public class JPOrnament extends PApplet{
   }
   private int theAvgNumber = 1;
   private ControlGroup addSoundAverageControl(SoundSensor.SoundAverage average){
-    ControlGroup group = controlP5.addGroup("soundAverage "+theAvgNumber, 10, 10, 420);
-    group.setBackgroundHeight(150);
+    ControlGroup group = controlP5.addGroup(average.getName(), 10, 10, 530);
+    group.setBackgroundHeight(140);
     group.setBackgroundColor(color(0,100));
-    
-    Slider slider = controlP5.addSlider("setLow", 1, 2000, average.getLow(), 10, 20, 300, 20);
+    int w = 400;
+    Slider slider = controlP5.addSlider("setLow", 30, 16384, average.getLow(), 10, 20, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
     
-    slider = controlP5.addSlider("setHigh", 1, 2000, average.getHigh(), 10, 50, 300, 20);
+    slider = controlP5.addSlider("setHigh", 30, 16384, average.getHigh(), 10, 40, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
     
-    slider = controlP5.addSlider("setSlowAverageSpeed", 0.0f, 1.0f, average.getSlowAverageSpeed(), 10, 80, 300, 20);
+    slider = controlP5.addSlider("setSlowAverageSpeed", 0.0f, 1.0f, average.getSlowAverageSpeed(), 10, 60, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
-    
-    slider = controlP5.addSlider("setThreshhold", 0.0f, 10.0f, average.getThreshhold(), 10, 110, 300, 20);
+
+    slider = controlP5.addSlider("setFactor", 0.0f, 30.0f, average.getFactor(), 10, 80, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
+    /*
+    slider = controlP5.addSlider("setThreshhold", 0.0f, 10.0f, average.getThreshhold(), 10, 100, w, 15);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    */    
+        
     
     /*
     Knob knob = controlP5.addKnob("setSlowAverageSpeed", 0.0f, 1.0f, 0.8f, 20, 90, 30);
@@ -156,6 +162,7 @@ public class JPOrnament extends PApplet{
     cP5Y += cP5H*2;
     //cP5Y += cP5H;
   }
+  /*
   public void keyPressed() {
     if (key == CODED) {
       if (keyCode == UP) {
@@ -165,11 +172,12 @@ public class JPOrnament extends PApplet{
       } 
     }
   }
-  private boolean moveURight = true;
+  */
+  //private boolean moveURight = true;
   
   public void draw(){
     //println("draw ornament");
-    addition.setXY(mouseX, mouseY);
+    //addition.setXY(mouseX, mouseY);
     soundSensor.update();
     
     
@@ -177,62 +185,38 @@ public class JPOrnament extends PApplet{
     //float deltaU = moveURight?soundSensor.getSlowAvgDelta0():-soundSensor.getSlowAvgDelta0();
     
     SoundSensor.SoundAverage[] averages = soundSensor.getTheAverages();
-    float slowAvgDelta = averages[0].getAverage()-averages[0].getSlowAverage();
-    float deltaU = moveURight?slowAvgDelta:-soundSensor.getSlowAvgDelta0();
-    float newU = patternInput.getU()+deltaU*deltaU;
+    float deltaU = averages[0].getAverage()-averages[0].getSlowAverage();
+    deltaU = pow(deltaU, 3);
+    deltaU*=0.0002;
+    float newU = patternInput.getU()+abs(deltaU);
     newU = norm(newU, floor(newU), ceil(newU));
-    /*
-    if(newU >= 1){
-      newU = newU - floor(newU);
-    }
-    else if(newU < 0){
-      newU = newU - floor(newU)+1;
-    }
-    */
-    /*
-    if(newU > 1){
-      newU = 1;
-      moveURight = false;
-    }
-    else if(newU < 0){
-      newU = 0;
-      moveURight = true;
-    }
-    */
-    /*
-    if(moveURight){
-      newU += deltaU;
-      if(newU > 1){
-        newU = 1;
-        moveURight = false;
-      }
-    }
-    else{
-      newU -= deltaU;
-      if(newU < 0){
-        newU = 0;
-        moveURight = true;
-      }
-    }
-    */
-    
-    /*float newU = patternInput.getU()+avg0/10;
-    if (newU > 1){
-      newU -= newU%1.0;
-    }
-    */
     patternInput.setU(newU);
-    float slowAvgDelta2 = averages[1].getAverage()-averages[1].getSlowAverage();
-    patternInput.setAngle(patternInput.getAngle()+slowAvgDelta2);
+    
+    
+    float deltaV = averages[3].getAverage()-averages[3].getSlowAverage();
+    deltaV = pow(deltaV, 3);
+    deltaV*=0.0002;
+    float newV = patternInput.getV()+abs(deltaV);
+    newV = norm(newV, floor(newV), ceil(newV));
+    patternInput.setV(newV);
+    
+    /*
+    slowAvgDelta = averages[3].getAverage()-averages[3].getSlowAverage();
+    float deltaV = moveUUp?slowAvgDelta:
+    */
+    //float slowAvgDelta2 = averages[1].getAverage()-averages[1].getSlowAverage();
+    float slowAvgDelta2 = (averages[2].getAverage()+averages[1].getAverage())-(averages[1].getSlowAverage()+averages[1].getSlowAverage());
+    slowAvgDelta2*=0.3;
+    float newAngle = patternInput.getAngle()+slowAvgDelta2;
+    patternInput.setAngle(pow(newAngle*0.1f, 2));
     //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
-    //patternInput.setU(avg0/10);
     
     patternInput.updateUV();
     
     //pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*100));
     
     pattern.render(patternInput);
-    addition.render(pattern);
+    //addition.render(pattern);
   }
   
   public void dispose(){
