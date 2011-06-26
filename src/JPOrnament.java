@@ -1,3 +1,7 @@
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import processing.core.*;
 import processing.opengl.*;
 import controlP5.*;
@@ -88,8 +92,27 @@ public class JPOrnament extends PApplet{
     knob.setMoveable(false);
     knob.plugTo(soundSensor);
     */
-    Button full = controlP5.addButton("setFullscreen", 0.0f, 300, 400, 60, 40);
-    full.moveTo(ornamentControlWindow);
+    
+    ControlGroup general = controlP5.addGroup("general", 600, 40, 360);
+    general.setBackgroundHeight(400);
+    general.setBackgroundColor(color(0,100));
+    //general.setPosition(theX, theY)
+    general.moveTo(ornamentControlWindow);
+    
+    Slider slider = controlP5.addSlider("setTileHeight", 16, 512, 80, 10, 20, 280, 15);
+    slider.moveTo(general);
+    slider.plugTo(pattern);
+
+    slider = controlP5.addSlider("setRadius", 0.01f, 0.3f, 0.05f, 10, 50, 280, 15);
+    slider.moveTo(general);
+    slider.plugTo(patternInput);
+    
+    
+    Button b = controlP5.addButton("setFullscreen", 0.0f, 260, 340, 70, 40);
+    b.moveTo(general);
+    
+    b = controlP5.addButton("chooseNewImage", 0.0f, 160, 340, 80, 40);
+    b.moveTo(general);
     
     
     SoundSensor.SoundAverage[] avgs = soundSensor.getTheAverages();
@@ -138,7 +161,30 @@ public class JPOrnament extends PApplet{
     theAvgNumber++;
     return group;
   }
-  
+  public void chooseNewImage(float v){
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        try {
+
+          JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPG & GIF Images", "png", "jpg", "gif");
+        fc.setFileFilter(filter);
+          int returnVal = fc.showOpenDialog(null);
+
+          if (returnVal == JFileChooser.APPROVE_OPTION) {
+            PImage tex = loadImage(fc.getSelectedFile().getAbsolutePath());
+            patternInput.setImage(tex);
+          } 
+          else {
+            println("Open command cancelled by user.");
+          }
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }); 
+  }
   private int cP5X = 20, cP5Y = 20, cP5W = 200, cP5H = 20, cP5Lx=70, cP5Ly = 5;
   private void addP5Slider(Object plugTo, String theName, float theMin, float theMax, float theDefaultValue){
     //cP5Y += cP5H;
@@ -195,7 +241,7 @@ public class JPOrnament extends PApplet{
     
     float deltaV = averages[3].getAverage()-averages[3].getSlowAverage();
     deltaV = pow(deltaV, 3);
-    deltaV*=0.0002;
+    deltaV*=0.0005;
     float newV = patternInput.getV()+abs(deltaV);
     newV = norm(newV, floor(newV), ceil(newV));
     patternInput.setV(newV);

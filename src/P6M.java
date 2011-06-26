@@ -32,7 +32,7 @@ class P6M extends Pattern{
     //squareTile.stroke(color(255, 0, 0));
     squareTile.noStroke();
     squareTile.beginShape(TRIANGLE_FAN);
-    squareTile.texture(pIn.img);
+    squareTile.texture(pIn.getImage());
     squareTile.vertex(0, squareTile.height, pIn.u1, pIn.v1);
     squareTile.vertex(0, 0, pIn.u2, pIn.v2);
     squareTile.vertex(triS, 0, pIn.u3, pIn.v3);
@@ -41,7 +41,7 @@ class P6M extends Pattern{
     squareTile.endShape();
     
     squareTile.beginShape(TRIANGLE_FAN);
-    squareTile.texture(pIn.img);
+    squareTile.texture(pIn.getImage());
     squareTile.vertex(squareTile.width, 0, pIn.u1, pIn.v1);
     squareTile.vertex(squareTile.width, squareTile.height, pIn.u2, pIn.v2);
     squareTile.vertex(triHypo, squareTile.height, pIn.u3, pIn.v3);

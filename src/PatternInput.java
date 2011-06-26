@@ -1,6 +1,6 @@
 import processing.core.*;
 class PatternInput implements PConstants{
-  PImage img;
+  private PImage img;
   private float u, v, r, a; //u and v are normalized coordinates, r radius, and a rotation angle
   private boolean changed = true;
   private PApplet pApplet;
@@ -100,5 +100,11 @@ class PatternInput implements PConstants{
   int yNormToAbs(float n){
     if(img == null) return 0;
     else return PApplet.floor(n*img.height);
+  }
+  public PImage getImage() {
+    return img;
+  }
+  public void setImage(PImage img){
+    this.img = img;
   }
 }
