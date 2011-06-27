@@ -24,8 +24,8 @@ public class JPOrnament extends PApplet{
   
   
   public void setup(){
-    //size(1920,1080, OPENGL);
-    size(1910,1070, OPENGL);
+    size(1918,1078, OPENGL);
+    //size(1910,1070, OPENGL);
     //size(1024,768, OPENGL);
     
     
@@ -103,7 +103,7 @@ public class JPOrnament extends PApplet{
     slider.moveTo(general);
     slider.plugTo(pattern);
 
-    slider = controlP5.addSlider("setRadius", 0.01f, 0.3f, 0.05f, 10, 50, 280, 15);
+    slider = controlP5.addSlider("setBaseRadius", 0.01f, 0.3f, patternInput.getBaseRadius(), 10, 50, 280, 15);
     slider.moveTo(general);
     slider.plugTo(patternInput);
     
@@ -251,13 +251,21 @@ public class JPOrnament extends PApplet{
     float deltaV = moveUUp?slowAvgDelta:
     */
     //float slowAvgDelta2 = averages[1].getAverage()-averages[1].getSlowAverage();
-    float slowAvgDelta2 = (averages[2].getAverage()+averages[1].getAverage())-(averages[1].getSlowAverage()+averages[1].getSlowAverage());
+    //float slowAvgDelta2 = (averages[2].getAverage()+averages[1].getAverage())-(averages[2].getSlowAverage()+averages[1].getSlowAverage());
+    float slowAvgDelta2 = averages[2].getAverage()-averages[2].getSlowAverage();
     slowAvgDelta2*=0.3;
     float newAngle = patternInput.getAngle()+slowAvgDelta2;
     //patternInput.setAngle(pow(newAngle*0.1f, 2));
     //patternInput.setAngle(pow(newAngle, 2)*0.1f);
     patternInput.setAngle(abs(newAngle)*0.1f);
     //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
+    
+    float slowAvgDelta1 = averages[1].getAverage()-averages[1].getSlowAverage();
+    slowAvgDelta1*=0.01;
+    //float newSize = patternInput.getRadius()+slowAvgDelta1;
+    //patternInput.setRadius(abs(newSize));
+    patternInput.setRadius(patternInput.getBaseRadius()+slowAvgDelta1);
+    //TODO: average[2] should affect patternInput.setRadius in a way so that it can still be set with the slider...
     
     patternInput.updateUV();
     

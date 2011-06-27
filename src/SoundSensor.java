@@ -113,13 +113,13 @@ class SoundSensor implements PConstants{
     fft.linAverages(avgSize);
     
     theAverages = new SoundAverage[4];
-    theAverages[0] = new SoundAverage("low base", 32, 240);
+    theAverages[0] = new SoundAverage("horizontal movement - low base", 32, 240);
     theAverages[0].setSlowAverageSpeed(0.5f);
-    theAverages[1] = new SoundAverage("high base", 240, 500);
+    theAverages[1] = new SoundAverage("size - high base", 240, 500);
     theAverages[1].setFactor(8.0f);
-    theAverages[2] = new SoundAverage("speach", 500, 2048);
+    theAverages[2] = new SoundAverage("rotation - speach", 500, 2048);
     theAverages[2].setFactor(20.0f);
-    theAverages[3] = new SoundAverage("letter s", 6000, 15000);
+    theAverages[3] = new SoundAverage("vertical movement - letter s", 6000, 15000);
     theAverages[3].setFactor(25.0f);
     
     //beat = new BeatDetect(bufferSize, sampleRate);

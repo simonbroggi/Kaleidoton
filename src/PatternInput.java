@@ -4,6 +4,7 @@ class PatternInput implements PConstants{
   private float u, v, r, a; //u and v are normalized coordinates, r radius, and a rotation angle
   private boolean changed = true;
   private PApplet pApplet;
+  private float baseRadius;
   
   public float getU(){
     return u;
@@ -18,6 +19,12 @@ class PatternInput implements PConstants{
   public void setV(float theV){
     v = theV;
     changed = true;
+  }
+  public void setBaseRadius(float theBaseR){
+    baseRadius = theBaseR;
+  }
+  public float getBaseRadius(){
+    return baseRadius;
   }
   public void setRadius(float theR){
     r = theR;
@@ -67,6 +74,7 @@ class PatternInput implements PConstants{
     v = 0.2f;
     r = 0.05f;
     a = 0.0f;
+    baseRadius = 0.05f;
     updateUV();
   }
   
