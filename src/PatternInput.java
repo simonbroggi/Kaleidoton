@@ -27,7 +27,7 @@ class PatternInput implements PConstants{
     return r;
   }
   public void setAngle(float theA){
-    a = theA;
+    a = theA % TWO_PI;
     changed = true;
   }
   public float getAngle(){

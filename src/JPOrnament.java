@@ -254,7 +254,9 @@ public class JPOrnament extends PApplet{
     float slowAvgDelta2 = (averages[2].getAverage()+averages[1].getAverage())-(averages[1].getSlowAverage()+averages[1].getSlowAverage());
     slowAvgDelta2*=0.3;
     float newAngle = patternInput.getAngle()+slowAvgDelta2;
-    patternInput.setAngle(pow(newAngle*0.1f, 2));
+    //patternInput.setAngle(pow(newAngle*0.1f, 2));
+    //patternInput.setAngle(pow(newAngle, 2)*0.1f);
+    patternInput.setAngle(abs(newAngle)*0.1f);
     //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
     
     patternInput.updateUV();
