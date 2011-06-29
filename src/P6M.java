@@ -5,12 +5,13 @@ class P6M extends Pattern{
   
   public P6M(PApplet pApplet){
     super(pApplet);
-    setTriL(80);
+    setTriL(256);
   }
   
   public void setTileHeight(int h){
     setTriL((float)h);
   }
+
   
   void setTriL(float newTriL){
     if(newTriL<=1024 && triL != newTriL){

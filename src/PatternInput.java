@@ -74,7 +74,7 @@ class PatternInput implements PConstants{
     v = 0.2f;
     r = 0.05f;
     a = 0.0f;
-    baseRadius = 0.05f;
+    baseRadius = 0.3f;
     updateUV();
   }
   

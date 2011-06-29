@@ -99,11 +99,11 @@ public class JPOrnament extends PApplet{
     //general.setPosition(theX, theY)
     general.moveTo(ornamentControlWindow);
     
-    Slider slider = controlP5.addSlider("setTileHeight", 16, 512, 80, 10, 20, 280, 15);
+    Slider slider = controlP5.addSlider("setTileHeight", 16, 512, pattern.getTileHeight(), 10, 20, 280, 15);
     slider.moveTo(general);
     slider.plugTo(pattern);
 
-    slider = controlP5.addSlider("setBaseRadius", 0.01f, 0.3f, patternInput.getBaseRadius(), 10, 50, 280, 15);
+    slider = controlP5.addSlider("setBaseRadius", 0.01f, 1.0f, patternInput.getBaseRadius(), 10, 50, 280, 15);
     slider.moveTo(general);
     slider.plugTo(patternInput);
     

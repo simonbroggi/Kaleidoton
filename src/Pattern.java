@@ -1,5 +1,5 @@
 import processing.core.*;
-class Pattern implements PConstants{
+abstract class Pattern implements PConstants{
   
   protected PApplet pApplet;
   public PGraphics squareTile;
@@ -33,8 +33,10 @@ class Pattern implements PConstants{
     return squareTile.get(tx, ty);
   }
   
-  public void setTileHeight(int h){
-    
+  public abstract void setTileHeight(int h);
+  
+  public int getTileHeight(){
+    return squareTile.height;
   }
   
   
