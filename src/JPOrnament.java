@@ -13,20 +13,20 @@ public class JPOrnament extends PApplet{
   private OrnamentControlCanvas occ;
   
   public static void main(String args[]){
-    PApplet.main(new String[] {"--present", "JPOrnament"});
-    //PApplet.main(new String[] {"JPOrnament"});
+    //PApplet.main(new String[] {"--present", "JPOrnament"});
+    PApplet.main(new String[] {"JPOrnament"});
   }
   static float TAN30 = PApplet.tan(PApplet.radians(30));
-  Pattern pattern;
+  Pattern pattern, p6m, p3m1;
   PatternInput patternInput;
   SoundSensor soundSensor;
   //Kreisspiegelung addition;
   
   
   public void setup(){
-    size(1918,1078, OPENGL);
+    //size(1918,1078, OPENGL);
     //size(1910,1070, OPENGL);
-    //size(1024,768, OPENGL);
+    size(1024,768, OPENGL);
     
     
     
@@ -38,7 +38,8 @@ public class JPOrnament extends PApplet{
     
     
     
-    pattern = new P6M(this);
+    pattern = p6m = new P6M(this);
+    p3m1 = new P3M1(this);
     //addition = new Kreisspiegelung(this, 200, 300, 180);
     patternInput = new PatternInput(this, "image.jpg");
     
@@ -57,7 +58,9 @@ public class JPOrnament extends PApplet{
     
   }
   
-  
+  public void set_P6M(boolean flag){
+    System.out.println("p6m set to "+flag);
+  }
   private void addOrnamentControll(){
     
     controlP5 = new ControlP5(this);
@@ -108,6 +111,31 @@ public class JPOrnament extends PApplet{
     slider.plugTo(patternInput);
     
     
+    
+    
+    //RadioButton changePatternRadio = controlP5.addRadioButton("changePattern", 160, 150);
+    RadioButton changePatternRadio = controlP5.addRadioButton("changePattern", 160, 150);
+    changePatternRadio.setColorForeground(color(120));
+    changePatternRadio.setColorActive(color(255));
+    changePatternRadio.setColorLabel(color(255));
+    changePatternRadio.setItemsPerRow(5);
+    changePatternRadio.setSpacingColumn(50);
+    addToRadioButton(changePatternRadio, "P6M", 1);
+    addToRadioButton(changePatternRadio, "P3M1", 2);
+    changePatternRadio.moveTo(general);
+    
+    /*
+    Toggle toggle = controlP5.addToggle("set_P6M",true,100,160,20,20);
+    //changePatternRadio.addItem("setP6M", 1.0f);
+    changePatternRadio.addItem(toggle, 1.0f);
+    
+    //changePatternRadio.addItem("setP3M1", 1.0f);
+    toggle = controlP5.addToggle("set_P3M1wat", false, 100, 190, 20, 20);
+    changePatternRadio.addItem(toggle, 0.0f);
+    changePatternRadio.moveTo(general);
+    */
+    
+    
     Button b = controlP5.addButton("setFullscreen", 0.0f, 260, 340, 70, 40);
     b.moveTo(general);
     
@@ -124,6 +152,29 @@ public class JPOrnament extends PApplet{
       
     }
     
+  }
+  private void addToRadioButton(RadioButton theRadioButton, String theName, int theValue ) {
+    Toggle t = theRadioButton.addItem(theName,theValue);
+    t.captionLabel().setColorBackground(color(80));
+    t.captionLabel().style().movePadding(2,0,-1,2);
+    t.captionLabel().style().moveMargin(-2,0,0,-3);
+    t.captionLabel().style().backgroundWidth = 46;
+  }
+  public void changePattern(int newPatternNo){
+    System.out.println("pattern changed to "+newPatternNo);
+  }
+  private int patternState = 1;
+  private boolean patternStateChanged = false;
+  public void controlEvent(ControlEvent theEvent) {
+    if(theEvent.isGroup() && theEvent.group().name().equals("changePattern")){
+      System.out.print("got an event from "+theEvent.group().name()+"\t");
+      for(int i=0;i<theEvent.group().arrayValue().length;i++) {
+        System.out.print(theEvent.group().arrayValue()[i]);
+      }
+      System.out.println("\t "+theEvent.group().value());
+      patternState = (int)theEvent.group().value();
+      patternStateChanged = true;
+    }
   }
   private int theAvgNumber = 1;
   private ControlGroup addSoundAverageControl(SoundSensor.SoundAverage average){
@@ -222,9 +273,26 @@ public class JPOrnament extends PApplet{
   //private boolean moveURight = true;
   
   public void draw(){
+    
+    
+    
     //println("draw ornament");
     //addition.setXY(mouseX, mouseY);
     soundSensor.update();
+    
+    if(patternStateChanged){
+      switch(patternState){
+      case 1:
+        pattern = p6m;
+        System.out.println("patternSet to p6m");
+        break;
+      case 2:
+        pattern = p3m1;
+        System.out.println("patternSet to p3m1");
+        break;
+      }
+      patternStateChanged = false;
+    }
     
     
     //float deltaU = soundSensor.getAvg0()/20;
@@ -257,7 +325,7 @@ public class JPOrnament extends PApplet{
     float newAngle = patternInput.getAngle()+slowAvgDelta2;
     //patternInput.setAngle(pow(newAngle*0.1f, 2));
     //patternInput.setAngle(pow(newAngle, 2)*0.1f);
-    patternInput.setAngle(abs(newAngle)*0.1f);
+    patternInput.setAngle(abs(newAngle));
     //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
     
     float slowAvgDelta1 = averages[1].getAverage()-averages[1].getSlowAverage();
@@ -270,7 +338,7 @@ public class JPOrnament extends PApplet{
     patternInput.updateUV();
     
     //pattern.setTileHeight(50+floor(soundSensor.fft.getAvg(1)*100));
-    
+
     pattern.render(patternInput);
     //addition.render(pattern);
   }
