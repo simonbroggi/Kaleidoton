@@ -1,25 +1,31 @@
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import processing.core.*;
 import processing.opengl.*;
 import controlP5.*;
 
-import fullscreen.*; 
-
-public class JPOrnament extends PApplet{  
+public class JPOrnament extends PApplet{
+  
   private ControlP5 controlP5;
-  //private ControlWindow ornamentControlWindow;
+  private Slider tileHeightSlider;
+  private Slider baseRadiusSlider;
+  private ControlWindow ornamentControlWindow;
   private OrnamentControlCanvas occ;
-  private SoftFullScreen fs;
   
   public static void main(String args[]){
     PApplet.main(new String[] {"--present", "JPOrnament"});
@@ -33,15 +39,12 @@ public class JPOrnament extends PApplet{
   
   
   public void setup(){
-    //size(2050,1200, OPENGL);
-    size(1920,1080, OPENGL);
+    //size(1920,1080, OPENGL);
+    size(1918,1078, OPENGL);
+    //size(1440,990, OPENGL);
     //size(1024,768, OPENGL);
     
-    // Create the fullscreen object
-    fs = new SoftFullScreen(this); 
     
-    // enter fullscreen mode
-    fs.enter(); 
     
     //frame.setResizable(true);
     //frame.setUndecorated(true);
@@ -59,8 +62,10 @@ public class JPOrnament extends PApplet{
     soundSensor = new SoundSensor(this);
     
     addOrnamentControll();
+    
+    load();
   }
-  /*
+  
   public void setFullscreen(){
     System.out.println("fullscreen is stil a problem "+screenWidth);
     
@@ -69,7 +74,7 @@ public class JPOrnament extends PApplet{
     //ornamentControlWindow.papplet().resize(screenWidth, screenHeight);
     ornamentControlWindow.setUndecorated(!ornamentControlWindow.isUndecorated());
     
-  }*/
+  }
   
   public void set_P6M(boolean flag){
     System.out.println("p6m set to "+flag);
@@ -78,11 +83,7 @@ public class JPOrnament extends PApplet{
     
     controlP5 = new ControlP5(this);
     
-    //ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0, 1024, 768, 20);
-    ControlGroup total = controlP5.addGroup("total", 10, 20, 1024);
-    total.setBackgroundHeight(768);
-    total.setBackgroundColor(color(0,50));
-    
+    ornamentControlWindow = controlP5.addControlWindow("controlP5window",0,0, 1024, 768, 20);
     //ornamentControlWindow.
     //controlP5.setColorBackground(color(0, 0, 80));
     //controlP5.setColorForeground(color(255, 0, 0));
@@ -90,16 +91,15 @@ public class JPOrnament extends PApplet{
     
     //controlP5.controlWindow = ornamentControlWindow;
     //controlWindow.hideCoordinates();
-    //ornamentControlWindow.setBackground(128);
+    ornamentControlWindow.setBackground(128);
     
     occ = new OrnamentControlCanvas(patternInput, soundSensor);
     occ.pre();
     //JPOrnamentControl jpOC = new JPOrnamentControl(ornamentControlWindow.papplet());
     //ornamentControlWindow.papplet().registerDraw(jpOC);
-    /*
     ornamentControlWindow.papplet().registerDispose(this);
     ornamentControlWindow.addCanvas(occ);
-    */
+    
     /*
     int knobDiameter = 40;
     
@@ -118,15 +118,15 @@ public class JPOrnament extends PApplet{
     general.setBackgroundHeight(400);
     general.setBackgroundColor(color(0,100));
     //general.setPosition(theX, theY)
-    general.moveTo(total);
+    general.moveTo(ornamentControlWindow);
     
-    Slider slider = controlP5.addSlider("setTileHeight", 16, 512, pattern.getTileHeight(), 10, 20, 280, 15);
-    slider.moveTo(general);
-    slider.plugTo(pattern);
+    tileHeightSlider = controlP5.addSlider("setTileHeight", 16, 512, pattern.getTileHeight(), 10, 20, 280, 15);
+    tileHeightSlider.moveTo(general);
+    tileHeightSlider.plugTo(pattern);
 
-    slider = controlP5.addSlider("setBaseRadius", 0.01f, 1.0f, patternInput.getBaseRadius(), 10, 50, 280, 15);
-    slider.moveTo(general);
-    slider.plugTo(patternInput);
+    baseRadiusSlider = controlP5.addSlider("setBaseRadius", 0.01f, 1.0f, patternInput.getBaseRadius(), 10, 50, 280, 15);
+    baseRadiusSlider.moveTo(general);
+    baseRadiusSlider.plugTo(patternInput);
     
     
     
@@ -157,37 +157,26 @@ public class JPOrnament extends PApplet{
     Button b = controlP5.addButton("setFullscreen", 0.0f, 260, 340, 70, 40);
     b.moveTo(general);
     
-    b = controlP5.addButton("chooseNewImage", 0.0f, 170, 340, 80, 40);
+    b = controlP5.addButton("chooseNewImage", 0.0f, 160, 340, 80, 40);
     b.moveTo(general);
     
-    b = controlP5.addButton("save_settings", 0.0f, 90, 340, 70, 40);
+    b = controlP5.addButton("save", 0.0f, 60, 340, 40, 40);
     b.moveTo(general);
+    //b.plugTo(soundSensor);
     
-    b = controlP5.addButton("load_settings", 0.0f, 10, 340, 70, 40);
+    b = controlP5.addButton("load", 0.0f, 10, 340, 40, 40);
     b.moveTo(general);
-    
+    //b.plugTo(soundSensor);
     
     SoundSensor.SoundAverage[] avgs = soundSensor.getTheAverages();
     for(int i=0; i<avgs.length; i++){
     //for(int i=0; i<1; i++){
       ControlGroup c = addSoundAverageControl(avgs[i]);
       c.setPosition(10, 30+170*i);
-      c.moveTo(total);
+      c.moveTo(ornamentControlWindow);
       
     }
     
-  }
-  public void save_settings(){
-    controlP5.save();
-  }
-  public boolean loadingSettings = false;
-  public void load_settings(){
-    if(loadingSettings == false){
-      loadingSettings = true;
-      controlP5.setAutoInitialization(true);
-      controlP5.load("controlP5.xml");
-      loadingSettings = false;
-    }
   }
   private void addToRadioButton(RadioButton theRadioButton, String theName, int theValue ) {
     Toggle t = theRadioButton.addItem(theName,theValue);
@@ -221,18 +210,27 @@ public class JPOrnament extends PApplet{
     Slider slider = controlP5.addSlider("setLow", 30, 16384, average.getLow(), 10, 20, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
+    average.lowSlider = slider;
     
     slider = controlP5.addSlider("setHigh", 30, 16384, average.getHigh(), 10, 40, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
+    average.highSlider = slider;
     
     slider = controlP5.addSlider("setSlowAverageSpeed", 0.0f, 1.0f, average.getSlowAverageSpeed(), 10, 60, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
+    average.slowAvgSSlider = slider;
 
     slider = controlP5.addSlider("setFactor", 0.0f, 30.0f, average.getFactor(), 10, 80, w, 15);
     slider.moveTo(group);
     slider.plugTo(average);
+    average.factorSlider = slider;
+    
+    slider = controlP5.addSlider("setPower", 0.0f, 3.0f, average.getPower(), 10, 100, w, 15);
+    slider.moveTo(group);
+    slider.plugTo(average);
+    average.powerSlider = slider;
     /*
     slider = controlP5.addSlider("setThreshhold", 0.0f, 10.0f, average.getThreshhold(), 10, 100, w, 15);
     slider.moveTo(group);
@@ -249,39 +247,39 @@ public class JPOrnament extends PApplet{
     return group;
   }
   public void chooseNewImage(float v){
-    if(loadingSettings == false){
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          try {
-  
-            JFileChooser fc = new JFileChooser();
-          FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPG & GIF Images", "png", "jpg", "gif");
-          fc.setFileFilter(filter);
-            int returnVal = fc.showOpenDialog(null);
-  
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-              PImage tex = loadImage(fc.getSelectedFile().getAbsolutePath());
-              patternInput.setImage(tex);
-            } 
-            else {
-              println("Open command cancelled by user.");
-            }
-          }
-          catch (Exception e) {
-            e.printStackTrace();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        try {
+
+          JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPG & GIF Images", "png", "jpg", "gif");
+        fc.setFileFilter(filter);
+          int returnVal = fc.showOpenDialog(null);
+
+          if (returnVal == JFileChooser.APPROVE_OPTION) {
+            PImage tex = loadImage(fc.getSelectedFile().getAbsolutePath());
+            patternInput.setImage(tex);
+          } 
+          else {
+            println("Open command cancelled by user.");
           }
         }
-      });
-    }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }); 
   }
   private int cP5X = 20, cP5Y = 20, cP5W = 200, cP5H = 20, cP5Lx=70, cP5Ly = 5;
-  /*
   private void addP5Slider(Object plugTo, String theName, float theMin, float theMax, float theDefaultValue){
     //cP5Y += cP5H;
     Slider slider = controlP5.addSlider(theName, theMin, theMax, theDefaultValue, cP5X, cP5Y, cP5W, cP5H);
     slider.moveTo(ornamentControlWindow);
     slider.setMoveable(false);
     slider.plugTo(plugTo);
+    /*Textlabel t = controlP5.addTextlabel("l_"+theName, plugTo.getClass().getName()+"."+theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    t.moveTo(ornamentControlWindow);
+    t.setMoveable(false);*/
     cP5Y += cP5H*2;
   }
   private void addP5Slider(Object plugTo, String theName, int theMin, int theMax, int theDefaultValue){
@@ -289,10 +287,12 @@ public class JPOrnament extends PApplet{
     slider.moveTo(ornamentControlWindow);
     slider.plugTo(plugTo);
     slider.setMoveable(false);
+    /*Textlabel t = controlP5.addTextlabel("l_"+theName, plugTo.getClass().getName()+"."+theName, cP5X+cP5Lx, cP5Y+cP5Ly);
+    t.moveTo(ornamentControlWindow);
+    t.setMoveable(false);*/
     cP5Y += cP5H*2;
     //cP5Y += cP5H;
   }
-  */
   /*
   public void keyPressed() {
     if (key == CODED) {
@@ -359,7 +359,7 @@ public class JPOrnament extends PApplet{
     float newAngle = patternInput.getAngle()+slowAvgDelta2;
     //patternInput.setAngle(pow(newAngle*0.1f, 2));
     //patternInput.setAngle(pow(newAngle, 2)*0.1f);
-    patternInput.setAngle(abs(newAngle));
+    patternInput.setAngle(newAngle);
     //patternInput.setAngle(patternInput.getAngle()+soundSensor.getSlowAvgDelta2());
     
     float slowAvgDelta1 = averages[1].getAverage()-averages[1].getSlowAverage();
@@ -375,23 +375,81 @@ public class JPOrnament extends PApplet{
 
     pattern.render(patternInput);
     //addition.render(pattern);
-    
-    /*
-    patternInput.render(this);
-    soundSensor.renderFFT(this);
-    //soundSensor.renderSlowAverages(theApplet);
-    soundSensor.renderTheAverages(this);
-    soundSensor.renderBuffer(this);
-    */
-    soundSensor.renderTheAverages(this);
   }
+  public void save(){
+    try{
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+      Document doc = docBuilder.newDocument();
+      
+      Element element = doc.createElement("kaleidoton");
+      doc.appendChild(element);
+      
+      soundSensor.save(doc, element);
+      
+      Element patternElement = doc.createElement("Pattern");
+      element.appendChild(patternElement);
+      patternElement.setAttribute("tileHeight", ""+pattern.getTileHeight());
+      
+      Element patternInputElement = doc.createElement("PatternInput");
+      element.appendChild(patternInputElement);
+      patternInputElement.setAttribute("baseRadius", ""+patternInput.getBaseRadius());
+      
+      //write the content into xml file
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      DOMSource source = new DOMSource(doc);
+      StreamResult result =  new StreamResult(new File("save.xml"));
+      //transformer.setOutputProperty(arg0, arg1);
+      transformer.transform(source, result);
+    }
   
+    catch(ParserConfigurationException pce){
+      pce.printStackTrace();
+    }
+    catch(TransformerException tfe){
+      tfe.printStackTrace();
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+
+  }
+  public void load(){
+    try {
+      File file = new File("save.xml");
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.parse(file);
+      doc.getDocumentElement().normalize();
+      
+      Element e = (Element)doc.getElementsByTagName("Pattern").item(0);
+      int th = new Integer(e.getAttribute("tileHeight")).intValue();
+      pattern.setTileHeight(th);
+      System.out.println(th);
+      tileHeightSlider.setValue(th);
+      
+      e = (Element)doc.getElementsByTagName("PatternInput").item(0);
+      float br = new Float(e.getAttribute("baseRadius")).floatValue();
+      System.out.println(br);
+      patternInput.setBaseRadius(br);
+      baseRadiusSlider.setValue(br);
+      
+      soundSensor.load(doc, null);
+      
+      System.out.println("Root element " + doc.getDocumentElement().getNodeName());
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
   public void dispose(){
     System.out.println("closed via control window");
     exit();
   }
   
   public void exit(){
+    //controlP5.save();
     soundSensor.close();
     super.exit();
   }

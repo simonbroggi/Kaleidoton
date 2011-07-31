@@ -1,3 +1,19 @@
+import java.io.File;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import controlP5.Slider;
+
 import processing.core.*;
 
 import ddf.minim.*;
@@ -29,20 +45,29 @@ class SoundSensor implements PConstants{
     private float average, slowAverage;
     private float ausschlag;//
     private float factor;
+    private float power;
+    public Slider lowSlider, highSlider, slowAvgSSlider, threshholdSlider, factorSlider, powerSlider;
     private String name;
     public SoundAverage(String name, float low, float high){
-      this(name, low, high, 0.8f, 0.0f, 1.0f);
+      this(name, low, high, 0.8f, 0.0f, 1.0f, 1.0f);
     }
-    public SoundAverage(String name, float low, float high, float slowAveragesSpeed, float threshhold, float factor){
+    public SoundAverage(String name, float low, float high, float slowAveragesSpeed, float threshhold, float factor, float power){
       this.name = name;
       this.low = low;
       this.high = high;
       this.slowAverageSpeed = slowAveragesSpeed;
       this.threshhold = threshhold;
       this.factor = factor;
+      this.power = power;
     }
     public String getName(){
       return name;
+    }
+    public float getPower(){
+      return power;
+    }
+    public void setPower(float p){
+      power = p;
     }
     public float getFactor(){
       return factor;
@@ -57,7 +82,7 @@ class SoundSensor implements PConstants{
       return slowAverage*factor;
     }
     public void update(FFT fft){
-      average = fft.calcAvg(low, high);
+      average = pApplet.pow(fft.calcAvg(low, high), power);
       float d = average - slowAverage;
       slowAverage += d*slowAverageSpeed;
     }
@@ -100,6 +125,30 @@ class SoundSensor implements PConstants{
       pApplet.fill(pApplet.color(255, 0, 0, 128));
       pApplet.rect(leftX, baseY - slowAverage*factor - 1 -(threshhold*factor/2), rightX, baseY - slowAverage*factor + 1 +(threshhold*factor/2));
     }
+    public void save(Document doc, Element parentE){
+      Element e = doc.createElement(name);
+      parentE.appendChild(e);
+      e.setAttribute("low", ""+low);
+      e.setAttribute("high", ""+high);
+      e.setAttribute("slow", ""+slowAverageSpeed);
+      e.setAttribute("factor", ""+factor);
+      e.setAttribute("power", ""+power);
+    }
+    public void load(Document doc){
+      Element e = (Element)doc.getElementsByTagName(name).item(0);
+      setLow( Float.valueOf(e.getAttribute("low")) );
+      lowSlider.setValue(Float.valueOf(e.getAttribute("low")));
+      setHigh( Float.valueOf(e.getAttribute("high")) );
+      highSlider.setValue(Float.valueOf(e.getAttribute("high")));
+      setSlowAverageSpeed( Float.valueOf(e.getAttribute("slow")) );
+      slowAvgSSlider.setValue(Float.valueOf(e.getAttribute("slow")));
+      setFactor( Float.valueOf(e.getAttribute("factor")) );
+      factorSlider.setValue(Float.valueOf(e.getAttribute("factor")));
+      setPower( Float.valueOf(e.getAttribute("power")) );
+      powerSlider.setValue(Float.valueOf(e.getAttribute("power")));
+      
+      
+    }
   }
   
   
@@ -113,13 +162,13 @@ class SoundSensor implements PConstants{
     fft.linAverages(avgSize);
     
     theAverages = new SoundAverage[4];
-    theAverages[0] = new SoundAverage("horizontal movement - low base", 32, 240);
+    theAverages[0] = new SoundAverage("horizontal_movement-low_base", 32, 240);
     theAverages[0].setSlowAverageSpeed(0.5f);
-    theAverages[1] = new SoundAverage("size - high base", 240, 500);
+    theAverages[1] = new SoundAverage("size-high_base", 240, 500);
     theAverages[1].setFactor(8.0f);
-    theAverages[2] = new SoundAverage("rotation - speach", 500, 2048);
+    theAverages[2] = new SoundAverage("rotation-speach", 500, 2048);
     theAverages[2].setFactor(20.0f);
-    theAverages[3] = new SoundAverage("vertical movement - letter s", 6000, 15000);
+    theAverages[3] = new SoundAverage("vertical_movement-letter_s", 6000, 15000);
     theAverages[3].setFactor(25.0f);
     
     //beat = new BeatDetect(bufferSize, sampleRate);
@@ -212,6 +261,64 @@ class SoundSensor implements PConstants{
       pApplet.line(i, h + audioIn.mix.get(i)*200, i+1, h + audioIn.mix.get(i+1)*200);
     }
   }
+  public void save(Document xmlDoc, Element xmlElement){
+    for(int i=0; i<theAverages.length; i++){
+      theAverages[i].save(xmlDoc, xmlElement);
+    }
+  }
+  public void save(){
+    try{
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+      Document doc = docBuilder.newDocument();
+      
+      Element element = doc.createElement("kaleidoton");
+      doc.appendChild(element);
+      
+      save(doc, element);
+      
+      //write the content into xml file
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      DOMSource source = new DOMSource(doc);
+      StreamResult result =  new StreamResult(new File("save.xml"));
+      transformer.transform(source, result);
+    }
+  
+    catch(ParserConfigurationException pce){
+      pce.printStackTrace();
+    }
+    catch(TransformerException tfe){
+      tfe.printStackTrace();
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+  public void load(Document xmlDoc, Element xmlElement){
+    for(int i=0; i<theAverages.length; i++){
+      theAverages[i].load(xmlDoc);
+    }
+  }
+  public void load(){
+    try {
+      File file = new File("save.xml");
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.parse(file);
+      doc.getDocumentElement().normalize();
+      
+      for(int i=0; i<theAverages.length; i++){
+        theAverages[i].load(doc);
+      }
+      
+      System.out.println("Root element " + doc.getDocumentElement().getNodeName());
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
   public void close(){
     audioIn.close();
     minim.stop();
