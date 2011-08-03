@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 class P3M1 extends Pattern{
-  
+  //just a test
   private float triL, triS, triHypo, triHypoL, triHypoS, triHeight;
   
   public P3M1(PApplet pApplet){
