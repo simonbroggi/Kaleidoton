@@ -1,4 +1,4 @@
-/application.linux
-/application.macosx
-/application.windows
+/application.linux/source
+/application.macosx/source
+/application.windows/source
 /preferences.txt
